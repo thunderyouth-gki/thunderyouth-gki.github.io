@@ -3,46 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slideshow Photos</title>
-  <style>
-    .slideshow-container {
-      display: flex;
-      overflow-x: auto;
-    }
-    .slideshow-container img {
-      margin: 10px;
-      width: 300px; /* Adjust as needed */
-      height: auto;
-    }
-  </style>
+  <title>Google Sheets Data</title>
 </head>
 <body>
   <h1>Slideshow Photos</h1>
-  <div class="slideshow-container" id="slideshow-container">
-    <!-- Slideshow images will be appended here -->
-  </div>
+  <div id="slideshow"></div>
 
   <script>
-    // Replace with your Google Apps Script Web App URL
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbwU9e34t_H80kfiAhzXulwUQzurvOzUxGgt0CTG9tYHwHXJRM6ntP-mIaVQbyyQyEDGRg/exec?page=API';
+    // URL of the published Google Sheets data
+    const googleSheetUrl = "https://spreadsheets.google.com/feeds/list/1HABq0GhhalrmcMUlmKbx4Z-Ta2SGf5BJA9aLMiUCNiA/od6/public/values?alt=json";
 
-    // Fetch the slideshowPhoto data
-    fetch(apiUrl)
+    // Fetch the data from Google Sheets
+    fetch(googleSheetUrl)
       .then(response => response.json())
       .then(data => {
-        const slideshowContainer = document.getElementById('slideshow-container');
-        
-        // Loop through the fetched slideshow photos and append them as img elements
-        data.forEach(photoUrl => {
-          const imgElement = document.createElement('img');
-          imgElement.src = photoUrl;
-          imgElement.alt = 'Slideshow Photo';
-          slideshowContainer.appendChild(imgElement);
+        const entries = data.feed.entry;
+        const slideshowPhotos = entries.map(entry => entry.gsx$slideshowphoto.$t); // Replace 'gsx$slideshowphoto' with your actual column name
+
+        // Find the container element
+        const slideshowContainer = document.getElementById('slideshow');
+
+        // Loop through the slideshowPhotos array and display each image
+        slideshowPhotos.forEach(url => {
+          const img = document.createElement('img');
+          img.src = url;
+          img.alt = "Slideshow Image";
+          img.style.width = "300px";  // Example style
+          img.style.margin = "10px";  // Example style
+          slideshowContainer.appendChild(img);
         });
       })
-      .catch(error => {
-        console.error('Error fetching slideshow photos:', error);
-      });
+      .catch(error => console.error('Error fetching data:', error));
   </script>
 </body>
 </html>
