@@ -6,21 +6,33 @@
 <body>
   <h1>Sheet Data</h1>
   <ul id="data-list"></ul>
+  <div id="error-message" style="color: red; margin-top: 20px;"></div>
 
   <script>
     const url = "https://script.google.com/macros/s/AKfycbyJeGd7aq0fU0t8uKIAgUuH_wytOyekptK0lTuUyW4FExoM2CrK-eh_R3HjJUVxDf_d/exec";
 
     fetch(url)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok: " + response.statusText);
+        }
+        return response.json();
+      })
       .then(data => {
         const list = document.getElementById("data-list");
+        if (data.length === 0) {
+          document.getElementById("error-message").textContent = "No data found.";
+          return;
+        }
         data.forEach(row => {
           const item = document.createElement("li");
           item.textContent = `Name: ${row.Name}, Age: ${row.Age}, Email: ${row.Email}`;
           list.appendChild(item);
         });
       })
-      .catch(err => console.error("Error fetching data:", err));
+      .catch(err => {
+        document.getElementById("error-message").textContent = "Error fetching data: " + err.message;
+      });
   </script>
 </body>
 </html>
