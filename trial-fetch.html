@@ -5,33 +5,35 @@
 </head>
 <body>
   <h1>Sheet Data</h1>
+  <p id="user-email"></p>
   <ul id="data-list"></ul>
   <div id="error-message" style="color: red; margin-top: 20px;"></div>
 
   <script>
-    const url = "https://script.google.com/macros/s/AKfycbyJeGd7aq0fU0t8uKIAgUuH_wytOyekptK0lTuUyW4FExoM2CrK-eh_R3HjJUVxDf_d/exec";
+    const url = "PASTE_YOUR_WEB_APP_URL_HERE";
 
     fetch(url)
       .then(response => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok: " + response.statusText);
-        }
+        if (!response.ok) throw new Error("Network error: " + response.statusText);
         return response.json();
       })
-      .then(data => {
+      .then(json => {
+        document.getElementById("user-email").textContent = "User Email: " + (json.email || "Unavailable");
+
         const list = document.getElementById("data-list");
-        if (data.length === 0) {
+        if (!json.data || json.data.length === 0) {
           document.getElementById("error-message").textContent = "No data found.";
           return;
         }
-        data.forEach(row => {
+
+        json.data.forEach(row => {
           const item = document.createElement("li");
           item.textContent = `Name: ${row.Name}, Age: ${row.Age}, Email: ${row.Email}`;
           list.appendChild(item);
         });
       })
       .catch(err => {
-        document.getElementById("error-message").textContent = "Error fetching data: " + err.message;
+        document.getElementById("error-message").textContent = "Error: " + err.message;
       });
   </script>
 </body>
