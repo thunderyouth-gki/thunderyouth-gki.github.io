@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fetch Google Sheet Data</title>
+</head>
+<body>
+  <h1>Sheet Data</h1>
+  <ul id="data-list"></ul>
+
+  <script>
+    const url = "https://script.google.com/macros/s/AKfycbyJeGd7aq0fU0t8uKIAgUuH_wytOyekptK0lTuUyW4FExoM2CrK-eh_R3HjJUVxDf_d/exec";
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        const list = document.getElementById("data-list");
+        data.forEach(row => {
+          const item = document.createElement("li");
+          item.textContent = `Name: ${row.Name}, Age: ${row.Age}, Email: ${row.Email}`;
+          list.appendChild(item);
+        });
+      })
+      .catch(err => console.error("Error fetching data:", err));
+  </script>
+</body>
+</html>
