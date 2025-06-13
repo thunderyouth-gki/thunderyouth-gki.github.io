@@ -197,8 +197,10 @@
       justify-content: space-around;
       align-items: center;
       padding: 20px;
-      width: auto;
       margin-top: 10px;
+      width: 100%;
+      flex-wrap: wrap;
+      overflow-x: hidden;
     }
 
     .contact-us .icon {
@@ -218,6 +220,7 @@
     .map-container {
       display: flex;
       justify-content: center;
+      overflow-x: hidden;
     }
 
     .map-container iframe {
@@ -261,7 +264,8 @@
     user-select: none;
     font-weight: bold;
     font-size: 24px;
-    padding-left: 20px;
+    padding: 0 16px;
+    box-sizing: border-box;
   }
   .subtitle-sunday-service {
     font-size: 16px;
