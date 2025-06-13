@@ -2,38 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Google Sheets Data</title>
+  <title>Google Sheet Data Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 1rem;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem 1rem;
+      text-align: left;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    #loading {
+      font-weight: bold;
+      color: #666;
+    }
+  </style>
 </head>
 <body>
-  <h1>Slideshow Photos</h1>
-  <div id="slideshow"></div>
+
+  <h1>Data from Google Sheet</h1>
+  <div id="loading">Loading data...</div>
+  <table id="data-table" style="display:none;">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
 
   <script>
-    // URL of the published Google Sheets data
-    const googleSheetUrl = "https://spreadsheets.google.com/feeds/list/1HABq0GhhalrmcMUlmKbx4Z-Ta2SGf5BJA9aLMiUCNiA/od6/public/values?alt=json";
+    const url = 'https://script.google.com/macros/s/AKfycbwMZAEMfeT-GIZgcvOWi8Kw0kpo7OZEpBb-gPHhXvDDtYfFqeyzuCDRdS2-PUReZzO0/exec';
 
-    // Fetch the data from Google Sheets
-    fetch(googleSheetUrl)
+    fetch(url)
       .then(response => response.json())
       .then(data => {
-        const entries = data.feed.entry;
-        const slideshowPhotos = entries.map(entry => entry.gsx$slideshowphoto.$t); // Replace 'gsx$slideshowphoto' with your actual column name
+        if (!Array.isArray(data) || data.length === 0) {
+          document.getElementById("loading").textContent = "No data found.";
+          return;
+        }
 
-        // Find the container element
-        const slideshowContainer = document.getElementById('slideshow');
+        const table = document.getElementById("data-table");
+        const thead = table.querySelector("thead");
+        const tbody = table.querySelector("tbody");
 
-        // Loop through the slideshowPhotos array and display each image
-        slideshowPhotos.forEach(url => {
-          const img = document.createElement('img');
-          img.src = url;
-          img.alt = "Slideshow Image";
-          img.style.width = "300px";  // Example style
-          img.style.margin = "10px";  // Example style
-          slideshowContainer.appendChild(img);
+        // Set headers
+        const headers = Object.keys(data[0]);
+        const headerRow = document.createElement("tr");
+        headers.forEach(header => {
+          const th = document.createElement("th");
+          th.textContent = header;
+          headerRow.appendChild(th);
         });
+        thead.appendChild(headerRow);
+
+        // Set rows
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          headers.forEach(header => {
+            const td = document.createElement("td");
+            td.textContent = row[header];
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("loading").style.display = "none";
+        table.style.display = "table";
       })
-      .catch(error => console.error('Error fetching data:', error));
+      .catch(error => {
+        document.getElementById("loading").textContent = "Failed to load data.";
+        console.error("Fetch error:", error);
+      });
   </script>
+
 </body>
 </html>
