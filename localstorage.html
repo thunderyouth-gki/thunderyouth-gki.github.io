@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Email Saver</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    #emailForm {
+      display: none;
+    }
+    .email-display {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="content">
+    <form id="emailForm">
+      <label for="email">Enter your email:</label><br>
+      <input type="email" id="emailInput" required />
+      <button type="submit">Save Email</button>
+    </form>
+    <div id="savedEmail" class="email-display"></div>
+  </div>
+
+  <script>
+    const emailForm = document.getElementById('emailForm');
+    const emailInput = document.getElementById('emailInput');
+    const savedEmailDiv = document.getElementById('savedEmail');
+
+    const savedEmail = localStorage.getItem('userEmail');
+
+    if (savedEmail) {
+      savedEmailDiv.textContent = `Your email: ${savedEmail}`;
+    } else {
+      emailForm.style.display = 'block';
+    }
+
+    emailForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const email = emailInput.value.trim();
+      if (email) {
+        localStorage.setItem('userEmail', email);
+        savedEmailDiv.textContent = `Your email: ${email}`;
+        emailForm.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
